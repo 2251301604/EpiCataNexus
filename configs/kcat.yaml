@@ -1,0 +1,39 @@
+task: kcat
+seed: 3407
+target_transform: log10
+
+data:
+  manifest: data/processed/kcat_manifest.tsv
+  split_dir: data/splits/kcat
+  outer_test_fraction: 0.10
+  inner_validation_fraction: 0.10
+  prepared_train_batches: data/features/kcat_train_batches.pt
+  prepared_valid_batches: data/features/kcat_valid_batches.pt
+  prepared_test_batches: data/features/kcat_test_batches.pt
+
+model:
+  node_dim: 51
+  edge_dim: 92
+  pocket_dim: 512
+  sequence_dim: 512
+  substrate_dim: 256
+  pretrained_dim: 256
+  t5_dim: 1024
+  esm_dim: 1280
+  trfm_dim: 1024
+  pst_dim: 1280
+  smiles_vocab_size: 600
+  attention_heads: 8
+  egnn_layers: 6
+  sggn_temperature: 0.1
+  dropout: 0.2
+
+training:
+  epochs: 150
+  batch_size: 4
+  accumulation_steps: 4
+  learning_rate: 2.0e-5
+  weight_decay: 1.0e-4
+  early_stopping_patience: 20
+  checkpoint: checkpoints/epicatanexus_kcat.pt
+

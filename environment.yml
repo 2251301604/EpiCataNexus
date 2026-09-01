@@ -1,0 +1,22 @@
+name: epicatanexus
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch=2.1.2
+  - pytorch-cuda=12.1
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - pyyaml
+  - pip
+  - pip:
+      - torch-geometric>=2.4
+      - transformers==4.43.3
+      - sentencepiece>=0.1.99
+      - tqdm>=4.66
+      - pytest>=7.4
+

@@ -1,0 +1,8 @@
+experiment,variant,r2,rmse,mae,pcc
+final_enhancement,Base Full without SGGN,0.623910,0.804304,0.584113,0.791291
+final_enhancement,SGGN,0.650283,0.775590,0.561594,0.806974
+final_enhancement,SGGN plus EC,0.649576,0.776374,0.561573,0.806560
+final_enhancement,SGGN plus pLDDT,0.650402,0.775458,0.561918,0.806994
+final_enhancement,Final SGGN plus EC plus pLDDT,0.648752,0.777286,0.562381,0.806043
+final_enhancement,Final plus modality dropout,0.628762,0.799098,0.580760,0.793912
+

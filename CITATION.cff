@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use EpiCataNexus, please cite the accompanying manuscript."
+title: "EpiCataNexus: A Substrate-Guided Pocket-Aware Model Bridging kcat Prediction and Enzyme Engineering-Oriented Virtual Screening"
+type: software
+version: 0.1.0
+date-released: 2026-09-01
+authors:
+  - family-names: Yang
+    given-names: Sen
+  - family-names: Dai
+    given-names: Shuning
+  - family-names: Zhou
+    given-names: You
+  - family-names: Ni
+    given-names: Xinye
+  - family-names: Lin
+    given-names: Yiyu
+  - family-names: Wang
+    given-names: Yan
+  - family-names: Chang
+    given-names: Shan
+  - family-names: Ding
+    given-names: Jun
+

@@ -1,0 +1,11 @@
+section,task_or_setting,model,n,r2,rmse,mae,pcc,spearman,hit5,high_hit5,auroc,ndcg_at_10,directional_concordance,notes
+benchmark,kcat,EpiCataNexus,1187,0.6470,0.7769,0.5618,0.8049,,,,,,,Independent outer test set
+benchmark,km,EpiCataNexus,1984,0.6802,0.7253,0.5228,0.8253,0.8176,,,,,,Independent outer test set
+engineering,P25910 single mutants,EpiCataNexus,8,,,,0.6183,0.5509,,,,,0.875,Observed mutants only
+engineering,PETase chain A versus B,EpiCataNexus,228,,,,0.9884,0.9626,,,,,,Template concordance
+engineering,PETase chain A versus C,EpiCataNexus,228,,,,0.9910,0.9579,,,,,,Template concordance
+engineering,PETase chain B versus C,EpiCataNexus,228,,,,0.9872,0.9511,,,,,,Template concordance
+engineering,TEM-1 double mutants,EpiCataNexus,11679,,,,,0.1343,,,,0.7716,,Positive-epistasis ranking
+engineering,substrate recovery all decoys,EpiCataNexus,704,,,,,,0.50625,0.52115,0.83093,,,3520 query rounds
+engineering,substrate recovery all decoys,DEKP,704,,,,,,0.15369,0.28077,0.57159,,,3520 query rounds
+

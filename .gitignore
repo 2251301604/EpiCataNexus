@@ -1,0 +1,54 @@
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.idea/
+.vscode/
+.DS_Store
+
+# Environments and local configuration
+.env
+.venv/
+venv/
+env/
+*.local.yaml
+
+# Runtime outputs
+logs/
+runs/
+outputs/
+wandb/
+tensorboard/
+
+# Large or generated scientific artifacts
+checkpoints/*
+!checkpoints/README.md
+data/raw/
+data/processed/
+data/features/
+*.pt
+*.pth
+*.pkl
+*.ckpt
+*.h5
+*.hdf5
+*.npz
+*.npy
+*.bin
+*.safetensors
+*.joblib
+*.ubj
+
+# Native installers and archives
+*.whl
+*.tar.bz2
+*.rar
+*.zip
+*.7z
+*.tar
+*.tar.gz
+

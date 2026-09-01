@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "epicatanexus"
+version = "0.1.0"
+description = "Substrate-guided pocket-aware learning for enzyme kinetic prediction and engineering-oriented virtual screening"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Sen Yang" },
+  { name = "Shuning Dai" },
+  { name = "You Zhou" },
+  { name = "Xinye Ni" },
+  { name = "Yiyu Lin" },
+  { name = "Yan Wang" },
+  { name = "Shan Chang" },
+  { name = "Jun Ding" },
+]
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "PyYAML>=6.0",
+  "scikit-learn>=1.2",
+  "scipy>=1.10",
+  "torch>=2.1",
+]
+
+[project.optional-dependencies]
+model = [
+  "mamba-ssm>=1.1",
+  "safetensors>=0.4",
+  "sentencepiece>=0.1.99",
+  "torch-geometric>=2.4",
+  "transformers==4.43.3",
+]
+chem = ["rdkit>=2023.9"]
+dev = ["pytest>=7.4", "ruff>=0.5"]
+
+[tool.setuptools.packages.find]
+include = ["epicatanexus*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
