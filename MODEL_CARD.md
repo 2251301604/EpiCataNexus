@@ -38,12 +38,12 @@ Exact tensor shapes are documented in [docs/DATA.md](docs/DATA.md) and
 
 ## Released checkpoints
 
-The planned initial external release is limited to the two pooled-feature neural checkpoints:
+The initial external release is limited to the two pooled-feature neural checkpoints:
 
-| Task | Historical filename | Status |
-|---|---|---|
-| `kcat` | `best_pocket_mamba_1792_clean_sggn.pkl` | External URL pending |
-| `Km` | `best_pocket_mamba_1792_km_sggn.pkl` | External URL pending |
+| Task | Released file | SHA-256 | Public location |
+|---|---|---|---|
+| `kcat` | `epicatanexus_kcat_pooled.safetensors` | `80e26098a3b8cbdd4a254bb8cb73357db710c9494fad9140f0607d812c925324` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_kcat_pooled.safetensors) |
+| `Km` | `epicatanexus_km_pooled.safetensors` | `c9bafd221484ab56bad1a603132351b5f0582d2e1c6fb4b502d9f8fa860d50ef` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_km_pooled.safetensors) |
 
 Both files contain the neural state dict for the pocket EGNN, pooled sequence fusion,
 SMILES-Mamba, TRFM/PST projections, SGGN, and the regression head. Optimizer states,

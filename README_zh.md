@@ -33,7 +33,7 @@ SMILES-Mamba 和 TRFM，并通过底物引导门控网络 SGGN 在预测前动�
 ## 核心结果
 
 本仓库提供论文所述 EpiCataNexus 架构的公开实现。下列数值为论文报告结果。
-计划中的首批外部权重将仅包含 `kcat` 与 `Km` pooled-feature 神经网络 checkpoint，
+首批外部权重仅包含 `kcat` 与 `Km` pooled-feature 神经网络 checkpoint，
 不发布任务相关的 XGBoost 权重。
 
 | 任务 | 测试样本 | R² | RMSE | MAE | PCC |
@@ -57,10 +57,10 @@ SMILES-Mamba 和 TRFM，并通过底物引导门控网络 SGGN 在预测前动�
 两份外部 checkpoint 使用相同的约 1550 万参数神经网络，包含口袋 EGNN、
 pooled ProtT5/ESM-2 融合、SMILES-Mamba、TRFM/PST 投影、SGGN 和任务回归头。
 
-| 任务 | 历史文件名 | 公开位置 |
-|---|---|---|
-| `kcat` | `best_pocket_mamba_1792_clean_sggn.pkl` | 外部发布后补充 |
-| `Km` | `best_pocket_mamba_1792_km_sggn.pkl` | 外部发布后补充 |
+| 任务 | 发布文件 | 历史来源文件名 | 公开位置 |
+|---|---|---|---|
+| `kcat` | `epicatanexus_kcat_pooled.safetensors` | `best_pocket_mamba_1792_clean_sggn.pkl` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_kcat_pooled.safetensors) |
+| `Km` | `epicatanexus_km_pooled.safetensors` | `best_pocket_mamba_1792_km_sggn.pkl` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_km_pooled.safetensors) |
 
 对可信权重执行严格结构校验：
 

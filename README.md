@@ -81,7 +81,7 @@ the compatibility class, not through the residue-level `EpiCataNexus` class abov
 
 This repository provides a public implementation of the EpiCataNexus architecture
 described in the paper. The values below are results reported in the paper. The
-planned initial external weight release will contain only the pooled-feature neural
+initial external weight release contains only the pooled-feature neural
 checkpoints for `kcat` and `Km`; task-specific XGBoost weights are not distributed.
 
 The reported independent-test performance is:
@@ -103,10 +103,10 @@ The two external task checkpoints use the same 15.5-million-parameter neural
 architecture and include the pocket EGNN, pooled ProtT5/ESM-2 fusion, SMILES-Mamba,
 TRFM/PST projections, SGGN, and the task regression head.
 
-| Task | Historical filename | Public location |
-|---|---|---|
-| `kcat` | `best_pocket_mamba_1792_clean_sggn.pkl` | To be added after the external release |
-| `Km` | `best_pocket_mamba_1792_km_sggn.pkl` | To be added after the external release |
+| Task | Released file | Historical source filename | Public location |
+|---|---|---|---|
+| `kcat` | `epicatanexus_kcat_pooled.safetensors` | `best_pocket_mamba_1792_clean_sggn.pkl` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_kcat_pooled.safetensors) |
+| `Km` | `epicatanexus_km_pooled.safetensors` | `best_pocket_mamba_1792_km_sggn.pkl` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_km_pooled.safetensors) |
 
 Validate either trusted checkpoint with strict state-dict matching:
 

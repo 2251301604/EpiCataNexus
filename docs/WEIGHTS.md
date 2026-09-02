@@ -1,21 +1,25 @@
 # Model weights
 
-Model files are hosted outside GitHub. Public URLs and immutable revisions will be
-added after the external release is created; no checkpoint is stored in this source
+Model files are hosted outside GitHub. The initial pooled-feature neural checkpoints
+are hosted on Hugging Face at
+[`nnnnnnnnnnnn1111/EpiCataNexus`](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus).
+The immutable release revision is
+`7c78581fd5150a3bd60b91d158daafa8a7590133`. No checkpoint is stored in this source
 repository.
 
 ## Initial release scope
 
-Only the following pooled-feature neural checkpoints are planned for the initial
+Only the following pooled-feature neural checkpoints are included in the initial
 external release:
 
-| Task | Historical filename | Parameters | SHA-256 |
-|---|---|---:|---|
-| `kcat` | `best_pocket_mamba_1792_clean_sggn.pkl` | 15,507,458 unique parameters | `25a9e5d2f8097c16f4c56b2850a0c5ec8e5f8ae5ae27f482ca92fef93a897306` |
-| `Km` | `best_pocket_mamba_1792_km_sggn.pkl` | 15,507,458 unique parameters | `4501bbeda51db54bd9dcded21934f79fc130329a79248c2f908e4dbb1da88aae` |
+| Task | Released file | Historical source filename | Parameters | SHA-256 | URL |
+|---|---|---|---:|---|---|
+| `kcat` | `epicatanexus_kcat_pooled.safetensors` | `best_pocket_mamba_1792_clean_sggn.pkl` | 15,507,458 unique parameters | `80e26098a3b8cbdd4a254bb8cb73357db710c9494fad9140f0607d812c925324` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_kcat_pooled.safetensors) |
+| `Km` | `epicatanexus_km_pooled.safetensors` | `best_pocket_mamba_1792_km_sggn.pkl` | 15,507,458 unique parameters | `c9bafd221484ab56bad1a603132351b5f0582d2e1c6fb4b502d9f8fa860d50ef` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_km_pooled.safetensors) |
 
-The hashes above identify the current local `.pkl` state dictionaries. If files are
-converted to `safetensors`, new hashes must be recorded for the converted artifacts.
+The hashes above identify the released `safetensors` artifacts. The historical `.pkl`
+filenames are listed only to preserve the mapping to the original local training
+outputs.
 
 Task-specific XGBoost, ExtraTrees, ridge, optimizer, and mixed-precision scaler states
 are outside the release scope.

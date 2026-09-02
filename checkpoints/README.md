@@ -1,16 +1,15 @@
 # Checkpoints
 
-Model weights are intentionally not stored in Git. The planned initial external release
-will contain only the pooled-feature `kcat` and `Km` neural state dictionaries.
-Download URLs and immutable external revisions will be added after hosting is
-finalized.
+Model weights are intentionally not stored in Git. The initial external release
+contains only the pooled-feature `kcat` and `Km` neural state dictionaries hosted on
+Hugging Face at revision `7c78581fd5150a3bd60b91d158daafa8a7590133`.
 
 Expected files:
 
-| Historical file | Task | SHA-256 |
-|---|---|---|
-| `best_pocket_mamba_1792_clean_sggn.pkl` | turnover-number prediction | `25a9e5d2f8097c16f4c56b2850a0c5ec8e5f8ae5ae27f482ca92fef93a897306` |
-| `best_pocket_mamba_1792_km_sggn.pkl` | Michaelis-constant prediction | `4501bbeda51db54bd9dcded21934f79fc130329a79248c2f908e4dbb1da88aae` |
+| Released file | Historical source file | Task | SHA-256 | URL |
+|---|---|---|---|---|
+| `epicatanexus_kcat_pooled.safetensors` | `best_pocket_mamba_1792_clean_sggn.pkl` | turnover-number prediction | `80e26098a3b8cbdd4a254bb8cb73357db710c9494fad9140f0607d812c925324` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_kcat_pooled.safetensors) |
+| `epicatanexus_km_pooled.safetensors` | `best_pocket_mamba_1792_km_sggn.pkl` | Michaelis-constant prediction | `c9bafd221484ab56bad1a603132351b5f0582d2e1c6fb4b502d9f8fa860d50ef` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/7c78581fd5150a3bd60b91d158daafa8a7590133/epicatanexus_km_pooled.safetensors) |
 
 Task-specific XGBoost weights are not distributed. Use
 `epicatanexus.legacy_pooled` rather than the residue-level canonical class to load these
