@@ -17,8 +17,8 @@ provide a complete one-command raw-to-`.pt` preprocessing pipeline.
 | Structure retrieval and cleaning wrapper | Not included in the current release |
 | fpocket execution wrapper and pocket-residue table export | Not included in the current release |
 | Pocket graph featurizer for the exact `[N, 51]` node and `[E, 92]` edge matrices | Not included in the current release |
-| PST feature extraction | Not included in the current release |
-| TRFM/SMILES Transformer feature extraction | Not included in the current release |
+| PST feature standardization | Provided by `scripts/extract_pst_features.py` for externally computed PST vectors |
+| TRFM/SMILES Transformer feature extraction | Provided by `scripts/extract_trfm_features.py` for Hugging Face-compatible encoders |
 | Full feature merge into model-ready `.pt` batches | Not included in the current release |
 
 Accordingly, users who want to run the current training, evaluation, or prediction
@@ -89,11 +89,25 @@ This writes one tensor file per unique sequence containing:
 | `esm_states` | `[L, 1280]` |
 | `sequence_mask` | `[L]` |
 
-The model also expects `pst_features` with shape `[B, 1280]`. In the current release,
-PST is treated as an externally precomputed structural feature. The exact PST model
-checkpoint, package version, pooling rule, and extraction script used for the
-manuscript experiments are not included yet and should be recorded before claiming
-full raw-data reproducibility.
+The model also expects `pst_features` with shape `[B, 1280]`. The current release
+provides an adapter that validates externally computed PST vectors and exports them in
+the same tensor-manifest style as the other feature stores:
+
+```bash
+python scripts/extract_pst_features.py \
+  --features data/external/pst_features.pkl \
+  --output-dir data/features/pst \
+  --pst-model-id "REPLACE_WITH_ACTUAL_PST_MODEL_OR_CHECKPOINT" \
+  --pooling "REPLACE_WITH_ACTUAL_POOLING_RULE"
+```
+
+Accepted PST input formats are `.pkl`, `.npz`, `.csv`, and `.tsv`. Pickle files must
+map `protein_id` to a 1280-dimensional vector. CSV/TSV tables must contain a
+`protein_id` column and feature columns prefixed with `pst_` by default.
+
+This script does not implement the PST neural model itself. The exact PST model
+checkpoint, package version, and pooling rule used for the manuscript experiments
+should be recorded before claiming full raw-data reproducibility.
 
 ### 4. Generate substrate features
 
@@ -105,9 +119,27 @@ The prepared batch requires both tokenized SMILES and pretrained TRFM features:
 | `smiles_mask` | `[B, S]` | valid-token mask |
 | `trfm_features` | `[B, 1024]` | pooled pretrained SMILES Transformer feature |
 
-The current release documents the required dimensions but does not include the exact
-TRFM/SMILES Transformer checkpoint, tokenizer/vocabulary export, pooling rule, or
-feature extraction script used for the manuscript experiments.
+For Hugging Face-compatible SMILES Transformer encoders, TRFM features can be extracted
+with:
+
+```bash
+python scripts/extract_trfm_features.py \
+  --input data/processed/kcat_manifest.tsv \
+  --output-dir data/features/trfm \
+  --trfm-model REPLACE_WITH_ACTUAL_TRFM_MODEL_OR_LOCAL_PATH \
+  --smiles-column smiles \
+  --compound-id-column compound_id \
+  --pooling cls \
+  --device cuda
+```
+
+The script writes one tensor file per unique SMILES and records a
+`trfm_feature_manifest.tsv`. It enforces the model-required 1024-dimensional output by
+default. Use `--expected-dim` only if the downstream model configuration was changed.
+
+The exact TRFM/SMILES Transformer checkpoint, tokenizer/vocabulary export, and pooling
+rule used for the manuscript experiments should be recorded before claiming full
+raw-data reproducibility.
 
 ### 5. Merge features into prepared `.pt` batches
 
@@ -167,8 +199,8 @@ or precisely reference:
 2. fpocket 4.2.3 command lines and binary checksum;
 3. the pocket graph featurizer that creates the exact 51-dimensional node features and
    92-dimensional edge features;
-4. PST model name, checkpoint, package version, pooling rule, and extraction script;
-5. TRFM/SMILES Transformer model name, checkpoint, tokenizer/vocabulary, pooling rule,
-   and extraction script;
+4. PST model name, checkpoint, package version, and pooling rule;
+5. TRFM/SMILES Transformer model name, checkpoint, tokenizer/vocabulary, and pooling
+   rule;
 6. a deterministic batch builder that merges the manifest, graph tensors, sequence
    features, substrate features, PST features, and targets into `.pt` files.

@@ -113,6 +113,10 @@ python scripts/prepare_data.py \
 独立测试记录。原始记录到模型 `.pt` 输入的预处理状态见
 [`docs/PREPROCESSING.md`](docs/PREPROCESSING.md)。
 
+仓库已经提供 ProtT5/ESM-2、Hugging Face 兼容 TRFM 特征提取，以及外部 PST
+向量标准化脚本。论文实验实际使用的 PST/TRFM checkpoint 和 pooling 规则仍需在
+正式复现说明中记录。
+
 ## 训练、评估与预测
 
 ```bash

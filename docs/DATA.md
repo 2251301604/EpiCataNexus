@@ -4,6 +4,21 @@ For the raw-record to prepared `.pt` workflow and the current public-release gap
 [PREPROCESSING.md](PREPROCESSING.md). This page defines the record fields and tensor
 schema used by the training and inference code.
 
+Feature helper scripts are available for residue-level ProtT5/ESM-2 extraction,
+Hugging Face-compatible TRFM extraction, and standardizing externally computed PST
+vectors:
+
+```bash
+python scripts/extract_features.py --input data/processed/kcat_manifest.tsv \
+  --output-dir data/features/protein_residue_states --device cuda
+
+python scripts/extract_trfm_features.py --input data/processed/kcat_manifest.tsv \
+  --output-dir data/features/trfm --trfm-model MODEL_OR_LOCAL_PATH --device cuda
+
+python scripts/extract_pst_features.py --features data/external/pst_features.pkl \
+  --output-dir data/features/pst --pst-model-id MODEL_OR_CHECKPOINT
+```
+
 ## Required record fields
 
 The normalized TSV manifest uses the following public schema:

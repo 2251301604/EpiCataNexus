@@ -195,6 +195,11 @@ independent test rows. Feature preprocessing status and the prepared-batch schem
 documented in [docs/PREPROCESSING.md](docs/PREPROCESSING.md) and
 [docs/DATA.md](docs/DATA.md).
 
+Helper scripts are provided for ProtT5/ESM-2 extraction, Hugging Face-compatible TRFM
+feature extraction, and standardizing externally computed PST vectors. The exact PST
+and TRFM model checkpoints used for the manuscript experiments must still be recorded
+for full raw-data reproducibility.
+
 ## Training and evaluation
 
 ```bash
