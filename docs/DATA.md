@@ -1,5 +1,9 @@
 # Data and preprocessing
 
+For the raw-record to prepared `.pt` workflow and the current public-release gaps, see
+[PREPROCESSING.md](PREPROCESSING.md). This page defines the record fields and tensor
+schema used by the training and inference code.
+
 ## Required record fields
 
 The normalized TSV manifest uses the following public schema:

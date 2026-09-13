@@ -13,8 +13,9 @@
 > 最终软件许可证将在相关信息确定后补充。
 
 [English README](README.md) · [安装](docs/INSTALL.md) ·
-[数据说明](docs/DATA.md) · [复现指南](docs/REPRODUCIBILITY.md) ·
-[权重说明](docs/WEIGHTS.md) · [模型卡](MODEL_CARD.md) · [参与贡献](CONTRIBUTING.md)
+[数据说明](docs/DATA.md) · [预处理说明](docs/PREPROCESSING.md) ·
+[复现指南](docs/REPRODUCIBILITY.md) · [权重说明](docs/WEIGHTS.md) ·
+[模型卡](MODEL_CARD.md) · [参与贡献](CONTRIBUTING.md)
 
 <p align="center">
   <img src="assets/figures/web/Fig1.webp" width="920" alt="EpiCataNexus 总体流程">
@@ -99,7 +100,8 @@ python scripts/prepare_data.py \
 ```
 
 对 11,869 条有效记录，脚本生成 9,613 条训练、1,069 条验证和 1,187 条
-独立测试记录。
+独立测试记录。原始记录到模型 `.pt` 输入的预处理状态见
+[`docs/PREPROCESSING.md`](docs/PREPROCESSING.md)。
 
 ## 训练、评估与预测
 
@@ -118,8 +120,9 @@ python scripts/predict.py \
 ```
 
 当前公开接口使用预处理后的张量批次。直接从序列和 SMILES 开始还需要结构
-获取、fpocket、ProtT5、ESM-2、PST 和 TRFM 预处理；在模型权重及相关许可
-确定前，仓库不会将其宣传为已经完成的一键功能。
+获取、fpocket、ProtT5、ESM-2、PST 和 TRFM 预处理；当前版本记录了所需
+`.pt` schema，但还没有提供完整的一键 raw-to-`.pt` 脚本，详见
+[`docs/PREPROCESSING.md`](docs/PREPROCESSING.md)。
 
 ## 论文真实配图
 

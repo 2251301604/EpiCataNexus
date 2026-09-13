@@ -15,9 +15,10 @@ engineering-oriented virtual screening.**
 > license will be added when they are available.
 
 [中文说明](README_zh.md) · [Installation](docs/INSTALL.md) ·
-[Data](docs/DATA.md) · [Reproducibility](docs/REPRODUCIBILITY.md) ·
-[Weights](docs/WEIGHTS.md) · [Model card](MODEL_CARD.md) ·
-[Engineering workflows](docs/ENGINEERING_TASKS.md) · [Contributing](CONTRIBUTING.md)
+[Data](docs/DATA.md) · [Preprocessing](docs/PREPROCESSING.md) ·
+[Reproducibility](docs/REPRODUCIBILITY.md) · [Weights](docs/WEIGHTS.md) ·
+[Model card](MODEL_CARD.md) · [Engineering workflows](docs/ENGINEERING_TASKS.md) ·
+[Contributing](CONTRIBUTING.md)
 
 <p align="center">
   <img src="assets/figures/web/Fig1.webp" width="920" alt="EpiCataNexus workflow">
@@ -180,8 +181,9 @@ python scripts/prepare_data.py \
 ```
 
 For 11,869 valid records this produces 9,613 training, 1,069 validation, and 1,187
-independent test rows. Feature preprocessing and the prepared-batch schema are
-documented in [docs/DATA.md](docs/DATA.md).
+independent test rows. Feature preprocessing status and the prepared-batch schema are
+documented in [docs/PREPROCESSING.md](docs/PREPROCESSING.md) and
+[docs/DATA.md](docs/DATA.md).
 
 ## Training and evaluation
 
@@ -204,8 +206,9 @@ python scripts/predict.py \
 ```
 
 Raw sequence/SMILES prediction also requires structure retrieval, fpocket, ProtT5,
-ESM-2, PST, and TRFM preprocessing. It is not presented as a one-command workflow
-until the public model artifacts and their licenses are finalized.
+ESM-2, PST, and TRFM preprocessing. The current release documents the required
+prepared `.pt` schema but does not yet provide a complete one-command raw-to-`.pt`
+pipeline; see [docs/PREPROCESSING.md](docs/PREPROCESSING.md).
 
 ## Ablation analysis
 
