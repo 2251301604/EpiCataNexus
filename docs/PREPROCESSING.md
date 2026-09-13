@@ -140,9 +140,10 @@ The script writes one tensor file per unique SMILES and records a
 `trfm_feature_manifest.tsv`. It enforces the model-required 1024-dimensional output by
 default. Use `--expected-dim` only if the downstream model configuration was changed.
 
-The exact TRFM/SMILES Transformer checkpoint, tokenizer/vocabulary export, and pooling
-rule used for the manuscript experiments should be recorded before claiming full
-raw-data reproducibility.
+For the legacy manuscript path, the local TRFM assets are `Model/trfm_12_23000.pkl`
+and `Model/vocab.pkl`; the SMILES-Mamba tokenizer vocabulary is `Model/bert_vocab.txt`.
+Before claiming full raw-data reproducibility, publish these binary assets outside
+GitHub, record immutable Hugging Face URLs/revisions, and provide SHA-256 hashes.
 
 ### 5. Merge features into prepared `.pt` batches
 
@@ -193,6 +194,46 @@ features:
 The pocket graph and SMILES-token inputs are still required. See [WEIGHTS.md](WEIGHTS.md)
 for the full legacy checkpoint input contract.
 
+## Single-query PDB + SMILES inference
+
+`scripts/infer_pdb_smiles_kcat_km.py` provides a PDB-first helper for predicting both
+`kcat` and `Km` for one protein-substrate pair with the released legacy pooled
+checkpoints. It performs pooled ProtT5/ESM-2 extraction, graph construction from a PDB
+or pocket PDB, PST pooling, SMILES tokenization, TRFM feature extraction, and then runs
+the two `.safetensors` task checkpoints.
+
+Example:
+
+```bash
+python scripts/infer_pdb_smiles_kcat_km.py \
+  --pdb examples/query_protein.pdb \
+  --pocket-pdb examples/query_fpocket_top_pocket.pdb \
+  --smiles "CC(=O)O" \
+  --kcat-checkpoint epicatanexus_kcat_pooled.safetensors \
+  --km-checkpoint epicatanexus_km_pooled.safetensors \
+  --bert-vocab Model/bert_vocab.txt \
+  --trfm-vocab Model/vocab.pkl \
+  --trfm-model Model/trfm_12_23000.pkl \
+  --pst-root /path/to/PST-main \
+  --pst-checkpoint Model/model.pt \
+  --output outputs/query_kcat_km.csv \
+  --device cuda
+```
+
+Sequence-only inference is not supported by this helper. If a user only has a protein
+sequence, they should first obtain a PDB structure for that exact sequence, for example
+from AlphaFold/ColabFold or from an experimental structure, and then run the command
+above with `--pdb`. A manuscript-consistent run should also pass a `--pocket-pdb`
+containing the residues selected from the highest default fpocket pocket score cavity.
+If `--pocket-pdb` is omitted, the helper builds the graph from the full PDB and emits a
+warning because that is a convenience approximation rather than the exact paper
+preprocessing.
+
+The required binary assets `Model/model.pt`, `Model/trfm_12_23000.pkl`,
+`Model/vocab.pkl`, and `Model/bert_vocab.txt` should be distributed through Hugging
+Face rather than GitHub. The script receives them as explicit local paths after the user
+downloads them.
+
 ## What must be added for full raw-data reproducibility
 
 Before the repository can claim complete raw-to-`.pt` preprocessing, it should include
@@ -202,7 +243,7 @@ or precisely reference:
 2. fpocket 4.2.3 binary checksum;
 3. the pocket graph featurizer that creates the exact 51-dimensional node features and
    92-dimensional edge features;
-4. TRFM/SMILES Transformer model name, checkpoint, tokenizer/vocabulary, and pooling
-   rule;
+4. immutable Hugging Face URLs/revisions and SHA-256 hashes for `Model/model.pt`,
+   `Model/trfm_12_23000.pkl`, `Model/vocab.pkl`, and `Model/bert_vocab.txt`;
 5. a deterministic batch builder that merges the manifest, graph tensors, sequence
    features, substrate features, PST features, and targets into `.pt` files.

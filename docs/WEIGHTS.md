@@ -24,6 +24,23 @@ outputs.
 Task-specific XGBoost, ExtraTrees, ridge, optimizer, and mixed-precision scaler states
 are outside the release scope.
 
+## Auxiliary assets for PDB + SMILES inference
+
+The single-query PDB + SMILES helper also needs preprocessing assets that are too large
+or too binary-specific for GitHub. These files should be hosted in the Hugging Face
+model repository, preferably pinned to an immutable revision, and downloaded locally
+before inference:
+
+| File | Role |
+|---|---|
+| `Model/model.pt` | PST `pst_t33_so` structure-only checkpoint |
+| `Model/trfm_12_23000.pkl` | pretrained TRFM/SMILES Transformer state dict |
+| `Model/vocab.pkl` | TRFM token vocabulary |
+| `Model/bert_vocab.txt` | SMILES-Mamba tokenizer vocabulary |
+
+The command-line interface takes explicit local paths to these files, so users can
+store them under any local directory after downloading them from Hugging Face.
+
 ## Compatibility path
 
 Use `epicatanexus.legacy_pooled.LegacyPooledEpiCataNexus` for these checkpoints. The
@@ -57,6 +74,30 @@ python scripts/predict_legacy_pooled.py \
   --output outputs/legacy_pooled_predictions.csv \
   --device cuda
 ```
+
+For single PDB + SMILES queries, use the raw-feature helper:
+
+```bash
+python scripts/infer_pdb_smiles_kcat_km.py \
+  --pdb examples/query_protein.pdb \
+  --pocket-pdb examples/query_fpocket_top_pocket.pdb \
+  --smiles "CC(=O)O" \
+  --kcat-checkpoint epicatanexus_kcat_pooled.safetensors \
+  --km-checkpoint epicatanexus_km_pooled.safetensors \
+  --bert-vocab Model/bert_vocab.txt \
+  --trfm-vocab Model/vocab.pkl \
+  --trfm-model Model/trfm_12_23000.pkl \
+  --pst-root /path/to/PST-main \
+  --pst-checkpoint Model/model.pt \
+  --output outputs/query_kcat_km.csv \
+  --device cuda
+```
+
+This helper is PDB-first. If only a protein sequence is available, generate or provide
+a PDB structure first; the released pooled checkpoints require a structure-derived
+graph and PST features. Supplying `--pocket-pdb` is recommended for manuscript-aligned
+inference. Without it, the script builds the graph from the full PDB and prints a
+warning.
 
 Do not pass these `.safetensors` files to `scripts/predict.py`; that script expects a
 canonical residue-level `.pt` checkpoint containing `model_config` and `model_state`.

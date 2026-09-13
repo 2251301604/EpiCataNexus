@@ -79,6 +79,31 @@ python scripts/predict_legacy_pooled.py \
   --device cuda
 ```
 
+如果要对单个 PDB + SMILES 同时预测 `kcat` 和 `Km`，使用新增的 legacy
+pooled 推理入口：
+
+```bash
+python scripts/infer_pdb_smiles_kcat_km.py \
+  --pdb examples/query_protein.pdb \
+  --pocket-pdb examples/query_fpocket_top_pocket.pdb \
+  --smiles "CC(=O)O" \
+  --kcat-checkpoint epicatanexus_kcat_pooled.safetensors \
+  --km-checkpoint epicatanexus_km_pooled.safetensors \
+  --bert-vocab Model/bert_vocab.txt \
+  --trfm-vocab Model/vocab.pkl \
+  --trfm-model Model/trfm_12_23000.pkl \
+  --pst-root /path/to/PST-main \
+  --pst-checkpoint Model/model.pt \
+  --output outputs/query_kcat_km.csv \
+  --device cuda
+```
+
+如果只有蛋白质序列，需要先为该序列生成或提供结构，例如 AlphaFold/ColabFold
+预测结构或实验 PDB。EpiCataNexus 需要结构来源的口袋图和 PST 结构特征，所以
+该脚本不支持纯序列直接推理。若省略 `--pocket-pdb`，脚本会用完整 PDB 构图作为
+便捷近似；若要与论文流程一致，应提供由 fpocket 最高 pocket score 口袋残基裁剪
+得到的 pocket PDB。
+
 输入格式、适用范围和限制见 [`docs/WEIGHTS.md`](docs/WEIGHTS.md)、
 [`docs/PREPROCESSING.md`](docs/PREPROCESSING.md) 与 [`MODEL_CARD.md`](MODEL_CARD.md)。
 
@@ -114,8 +139,10 @@ python scripts/prepare_data.py \
 [`docs/PREPROCESSING.md`](docs/PREPROCESSING.md)。
 
 仓库已经提供 ProtT5/ESM-2、Hugging Face 兼容 TRFM 特征提取，以及外部 PST
-向量标准化脚本。论文实验实际使用的 PST/TRFM checkpoint 和 pooling 规则仍需在
-正式复现说明中记录。
+向量标准化脚本，并新增了单个 PDB+SMILES 的 legacy 推理入口。PST checkpoint
+`Model/model.pt`、TRFM 文件 `Model/trfm_12_23000.pkl`、`Model/vocab.pkl`
+以及 SMILES tokenizer 词表 `Model/bert_vocab.txt` 不应进入 GitHub，建议托管到
+Hugging Face model repository 后在本地下载并通过命令行参数传入。
 
 ## 训练、评估与预测
 

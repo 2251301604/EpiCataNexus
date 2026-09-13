@@ -125,6 +125,32 @@ python scripts/predict_legacy_pooled.py \
   --device cuda
 ```
 
+For single-query PDB + SMILES inference with the released legacy pooled checkpoints,
+use:
+
+```bash
+python scripts/infer_pdb_smiles_kcat_km.py \
+  --pdb examples/query_protein.pdb \
+  --pocket-pdb examples/query_fpocket_top_pocket.pdb \
+  --smiles "CC(=O)O" \
+  --kcat-checkpoint epicatanexus_kcat_pooled.safetensors \
+  --km-checkpoint epicatanexus_km_pooled.safetensors \
+  --bert-vocab Model/bert_vocab.txt \
+  --trfm-vocab Model/vocab.pkl \
+  --trfm-model Model/trfm_12_23000.pkl \
+  --pst-root /path/to/PST-main \
+  --pst-checkpoint Model/model.pt \
+  --output outputs/query_kcat_km.csv \
+  --device cuda
+```
+
+If only a protein sequence is available, first generate or provide a structure
+for that sequence, for example using AlphaFold/ColabFold or an experimental PDB.
+The model needs a structure-derived pocket graph and PST structural features, so
+sequence-only inference is not supported by this script. If `--pocket-pdb` is
+omitted, the graph is built from the full PDB as a convenience approximation; for
+manuscript-consistent inference, provide the fpocket-selected pocket residues.
+
 See [docs/WEIGHTS.md](docs/WEIGHTS.md), [docs/PREPROCESSING.md](docs/PREPROCESSING.md),
 and [MODEL_CARD.md](MODEL_CARD.md) for the input contract, scope, and limitations.
 
@@ -196,9 +222,10 @@ documented in [docs/PREPROCESSING.md](docs/PREPROCESSING.md) and
 [docs/DATA.md](docs/DATA.md).
 
 Helper scripts are provided for ProtT5/ESM-2 extraction, Hugging Face-compatible TRFM
-feature extraction, and standardizing externally computed PST vectors. The exact PST
-and TRFM model checkpoints used for the manuscript experiments must still be recorded
-for full raw-data reproducibility.
+feature extraction, standardizing externally computed PST vectors, and single-query
+legacy PDB+SMILES inference. The PST checkpoint (`Model/model.pt`) and TRFM assets
+(`Model/trfm_12_23000.pkl`, `Model/vocab.pkl`, plus `Model/bert_vocab.txt`) should be
+hosted outside GitHub, for example in the Hugging Face model repository.
 
 ## Training and evaluation
 
