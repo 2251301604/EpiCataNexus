@@ -40,8 +40,8 @@ the authors confirm a redistributable artifact.
 ## Candidate-pocket construction
 
 1. Remove non-protein atoms from the structure.
-2. Run fpocket 4.2.3 on protein-only geometry.
-3. Retain the highest-scoring cavity.
+2. Run fpocket 4.2.3 on protein-only geometry with default parameters.
+3. Retain the cavity with the highest default fpocket pocket score.
 4. Select residues with at least one heavy atom within 6 Å of a retained alpha sphere.
 5. Use residue Cα coordinates as node positions.
 6. Connect pocket residues whose Cα distance is at most 10 Å.
@@ -61,6 +61,12 @@ For each sequence the script stores ProtT5 states with shape `[L, 1024]`, ESM-2 
 with shape `[L, 1280]`, and a shared residue mask. It removes model-specific special
 tokens and aborts if the two representations cannot be aligned to the same residue
 indices.
+
+The manuscript PST feature store was generated with `pst_t33_so` using checkpoint
+`Model/model.pt`, `--aggr none`, and mean pooling over residue representations. In the
+PST codebase mapping, `pst_t33_so` corresponds to `esm2_t33_650M_UR50D` with
+`train_struct_only`. The released helper `scripts/extract_pst_features.py` standardizes
+precomputed PST vectors; it does not bundle the PST neural checkpoint itself.
 
 ## Legacy pooled-feature inputs
 

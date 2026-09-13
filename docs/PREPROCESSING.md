@@ -59,8 +59,8 @@ AlphaFold source. The manuscript preprocessing uses a protein-only structure bef
 pocket prediction:
 
 1. remove non-protein atoms;
-2. run fpocket 4.2.3 on the cleaned structure;
-3. retain the highest-scoring predicted cavity;
+2. run fpocket 4.2.3 on the cleaned structure with default parameters;
+3. retain the cavity with the highest default fpocket pocket score;
 4. select residues with at least one heavy atom within 6 Å of a retained alpha sphere;
 5. use residue C-alpha coordinates as node positions;
 6. connect pocket residues whose C-alpha distance is at most 10 Å.
@@ -97,17 +97,20 @@ the same tensor-manifest style as the other feature stores:
 python scripts/extract_pst_features.py \
   --features data/external/pst_features.pkl \
   --output-dir data/features/pst \
-  --pst-model-id "REPLACE_WITH_ACTUAL_PST_MODEL_OR_CHECKPOINT" \
-  --pooling "REPLACE_WITH_ACTUAL_POOLING_RULE"
+  --pst-model-id pst_t33_so:Model/model.pt \
+  --pooling residue-mean
 ```
 
 Accepted PST input formats are `.pkl`, `.npz`, `.csv`, and `.tsv`. Pickle files must
 map `protein_id` to a 1280-dimensional vector. CSV/TSV tables must contain a
 `protein_id` column and feature columns prefixed with `pst_` by default.
 
-This script does not implement the PST neural model itself. The exact PST model
-checkpoint, package version, and pooling rule used for the manuscript experiments
-should be recorded before claiming full raw-data reproducibility.
+This script does not implement the PST neural model itself. The manuscript PST feature
+store was generated with `pst_t33_so`, checkpoint `Model/model.pt`, `--aggr none`, and
+`residue_repr.mean(dim=0)` pooling. In the PST model mapping, `pst_t33_so` corresponds
+to `esm2_t33_650M_UR50D` with `train_struct_only`. The local `feature/pst.pkl` artifact
+is a plain dictionary with 1,850 protein entries; each value is a `(1, 1280)` `float32`
+array and the file itself does not embed model, checkpoint, or pooling metadata.
 
 ### 4. Generate substrate features
 
@@ -196,11 +199,10 @@ Before the repository can claim complete raw-to-`.pt` preprocessing, it should i
 or precisely reference:
 
 1. structure retrieval and cleaning commands;
-2. fpocket 4.2.3 command lines and binary checksum;
+2. fpocket 4.2.3 binary checksum;
 3. the pocket graph featurizer that creates the exact 51-dimensional node features and
    92-dimensional edge features;
-4. PST model name, checkpoint, package version, and pooling rule;
-5. TRFM/SMILES Transformer model name, checkpoint, tokenizer/vocabulary, and pooling
+4. TRFM/SMILES Transformer model name, checkpoint, tokenizer/vocabulary, and pooling
    rule;
-6. a deterministic batch builder that merges the manifest, graph tensors, sequence
+5. a deterministic batch builder that merges the manifest, graph tensors, sequence
    features, substrate features, PST features, and targets into `.pt` files.
