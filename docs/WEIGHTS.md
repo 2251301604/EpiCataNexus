@@ -45,8 +45,21 @@ compatibility model expects:
 Strictly validate a trusted file before inference:
 
 ```bash
-python scripts/verify_legacy_checkpoint.py /path/to/checkpoint.pkl
+python scripts/verify_legacy_checkpoint.py epicatanexus_kcat_pooled.safetensors
 ```
+
+Run predictions with the legacy pooled compatibility script:
+
+```bash
+python scripts/predict_legacy_pooled.py \
+  --checkpoint epicatanexus_kcat_pooled.safetensors \
+  --batches data/features/legacy_pooled_new_pairs.pt \
+  --output outputs/legacy_pooled_predictions.csv \
+  --device cuda
+```
+
+Do not pass these `.safetensors` files to `scripts/predict.py`; that script expects a
+canonical residue-level `.pt` checkpoint containing `model_config` and `model_state`.
 
 For safer distribution, convert each trusted tensor-only state dictionary and validate
 the converted file:

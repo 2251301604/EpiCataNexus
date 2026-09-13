@@ -66,11 +66,21 @@ pooled ProtT5/ESM-2 融合、SMILES-Mamba、TRFM/PST 投影、SGGN 和任务回�
 对可信权重执行严格结构校验：
 
 ```bash
-python scripts/verify_legacy_checkpoint.py /path/to/checkpoint.pkl
+python scripts/verify_legacy_checkpoint.py epicatanexus_kcat_pooled.safetensors
 ```
 
-输入格式、适用范围和限制见 [`docs/WEIGHTS.md`](docs/WEIGHTS.md) 与
-[`MODEL_CARD.md`](MODEL_CARD.md)。
+使用专用兼容脚本运行 legacy pooled 推理：
+
+```bash
+python scripts/predict_legacy_pooled.py \
+  --checkpoint epicatanexus_kcat_pooled.safetensors \
+  --batches data/features/legacy_pooled_new_pairs.pt \
+  --output outputs/legacy_pooled_predictions.csv \
+  --device cuda
+```
+
+输入格式、适用范围和限制见 [`docs/WEIGHTS.md`](docs/WEIGHTS.md)、
+[`docs/PREPROCESSING.md`](docs/PREPROCESSING.md) 与 [`MODEL_CARD.md`](MODEL_CARD.md)。
 
 ## 安装与轻量验证
 
@@ -118,6 +128,10 @@ python scripts/predict.py \
   --batches data/features/new_pairs.pt \
   --output outputs/new_pair_predictions.csv
 ```
+
+`scripts/predict.py` 仅适用于带有 `model_config` 和 `model_state` 的 canonical
+残基级 `.pt` checkpoint。Hugging Face 上发布的 `.safetensors` 是 legacy
+pooled-feature state dict，需要使用 `scripts/predict_legacy_pooled.py`。
 
 当前公开接口使用预处理后的张量批次。直接从序列和 SMILES 开始还需要结构
 获取、fpocket、ProtT5、ESM-2、PST 和 TRFM 预处理；当前版本记录了所需

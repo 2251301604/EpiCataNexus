@@ -112,11 +112,21 @@ TRFM/PST projections, SGGN, and the task regression head.
 Validate either trusted checkpoint with strict state-dict matching:
 
 ```bash
-python scripts/verify_legacy_checkpoint.py /path/to/checkpoint.pkl
+python scripts/verify_legacy_checkpoint.py epicatanexus_kcat_pooled.safetensors
 ```
 
-See [docs/WEIGHTS.md](docs/WEIGHTS.md) and [MODEL_CARD.md](MODEL_CARD.md) for the
-input contract, scope, and limitations.
+Run legacy pooled inference with the dedicated compatibility script:
+
+```bash
+python scripts/predict_legacy_pooled.py \
+  --checkpoint epicatanexus_kcat_pooled.safetensors \
+  --batches data/features/legacy_pooled_new_pairs.pt \
+  --output outputs/legacy_pooled_predictions.csv \
+  --device cuda
+```
+
+See [docs/WEIGHTS.md](docs/WEIGHTS.md), [docs/PREPROCESSING.md](docs/PREPROCESSING.md),
+and [MODEL_CARD.md](MODEL_CARD.md) for the input contract, scope, and limitations.
 
 ## Engineering-oriented evaluation
 
@@ -204,6 +214,11 @@ python scripts/predict.py \
   --batches data/features/new_pairs.pt \
   --output outputs/new_pair_predictions.csv
 ```
+
+`scripts/predict.py` is for canonical residue-level `.pt` checkpoints packaged with
+`model_config` and `model_state`. The Hugging Face `.safetensors` checkpoints are
+legacy pooled-feature state dictionaries; use `scripts/predict_legacy_pooled.py` for
+those files.
 
 Raw sequence/SMILES prediction also requires structure retrieval, fpocket, ProtT5,
 ESM-2, PST, and TRFM preprocessing. The current release documents the required
