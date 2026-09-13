@@ -141,8 +141,9 @@ python scripts/prepare_data.py \
 仓库已经提供 ProtT5/ESM-2、Hugging Face 兼容 TRFM 特征提取，以及外部 PST
 向量标准化脚本，并新增了单个 PDB+SMILES 的 legacy 推理入口。PST checkpoint
 `Model/model.pt`、TRFM 文件 `Model/trfm_12_23000.pkl`、`Model/vocab.pkl`
-以及 SMILES tokenizer 词表 `Model/bert_vocab.txt` 不应进入 GitHub，建议托管到
-Hugging Face model repository 后在本地下载并通过命令行参数传入。
+以及 SMILES tokenizer 词表 `Model/bert_vocab.txt` 不进入 GitHub，已经托管到
+Hugging Face model repository；固定链接和 SHA-256 校验值见
+[`docs/WEIGHTS.md`](docs/WEIGHTS.md)。
 
 ## 训练、评估与预测
 

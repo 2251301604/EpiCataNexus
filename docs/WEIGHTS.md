@@ -27,16 +27,16 @@ are outside the release scope.
 ## Auxiliary assets for PDB + SMILES inference
 
 The single-query PDB + SMILES helper also needs preprocessing assets that are too large
-or too binary-specific for GitHub. These files should be hosted in the Hugging Face
-model repository, preferably pinned to an immutable revision, and downloaded locally
-before inference:
+or too binary-specific for GitHub. These files are hosted in the same Hugging Face
+model repository at immutable revision
+`3b83df8700f5ab2d17c704f78e3e06cd2fcd0921`:
 
-| File | Role |
-|---|---|
-| `Model/model.pt` | PST `pst_t33_so` structure-only checkpoint |
-| `Model/trfm_12_23000.pkl` | pretrained TRFM/SMILES Transformer state dict |
-| `Model/vocab.pkl` | TRFM token vocabulary |
-| `Model/bert_vocab.txt` | SMILES-Mamba tokenizer vocabulary |
+| File | Role | SHA-256 | URL |
+|---|---|---|---|
+| `Model/model.pt` | PST `pst_t33_so` structure-only checkpoint | `5a54f878cfb4429bdbbb6a1ea6c9f12570015089fdb1f821e93bbd40ef1c921c` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/3b83df8700f5ab2d17c704f78e3e06cd2fcd0921/Model/model.pt) |
+| `Model/trfm_12_23000.pkl` | pretrained TRFM/SMILES Transformer state dict | `6b56c8c05d048e7c7d143c4e3ba2bc6f76e5eda2358798cf636210406a700eb2` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/3b83df8700f5ab2d17c704f78e3e06cd2fcd0921/Model/trfm_12_23000.pkl) |
+| `Model/vocab.pkl` | TRFM token vocabulary | `21a66c850a3222547ec0fbd30c05fe587d66d22d3de2ee2195c58250fe486fb7` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/3b83df8700f5ab2d17c704f78e3e06cd2fcd0921/Model/vocab.pkl) |
+| `Model/bert_vocab.txt` | SMILES-Mamba tokenizer vocabulary | `2d03157ab523544f4c6216c0491da22e46c27f41be8df73b758fbc19f5767c70` | [Hugging Face](https://huggingface.co/nnnnnnnnnnnn1111/EpiCataNexus/blob/3b83df8700f5ab2d17c704f78e3e06cd2fcd0921/Model/bert_vocab.txt) |
 
 The command-line interface takes explicit local paths to these files, so users can
 store them under any local directory after downloading them from Hugging Face.

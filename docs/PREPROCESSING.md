@@ -142,8 +142,8 @@ default. Use `--expected-dim` only if the downstream model configuration was cha
 
 For the legacy manuscript path, the local TRFM assets are `Model/trfm_12_23000.pkl`
 and `Model/vocab.pkl`; the SMILES-Mamba tokenizer vocabulary is `Model/bert_vocab.txt`.
-Before claiming full raw-data reproducibility, publish these binary assets outside
-GitHub, record immutable Hugging Face URLs/revisions, and provide SHA-256 hashes.
+These binary assets are published outside GitHub in the Hugging Face model repository;
+see [WEIGHTS.md](WEIGHTS.md) for immutable URLs/revisions and SHA-256 hashes.
 
 ### 5. Merge features into prepared `.pt` batches
 
@@ -230,8 +230,8 @@ warning because that is a convenience approximation rather than the exact paper
 preprocessing.
 
 The required binary assets `Model/model.pt`, `Model/trfm_12_23000.pkl`,
-`Model/vocab.pkl`, and `Model/bert_vocab.txt` should be distributed through Hugging
-Face rather than GitHub. The script receives them as explicit local paths after the user
+`Model/vocab.pkl`, and `Model/bert_vocab.txt` are distributed through Hugging Face
+rather than GitHub. The script receives them as explicit local paths after the user
 downloads them.
 
 ## What must be added for full raw-data reproducibility
@@ -243,7 +243,5 @@ or precisely reference:
 2. fpocket 4.2.3 binary checksum;
 3. the pocket graph featurizer that creates the exact 51-dimensional node features and
    92-dimensional edge features;
-4. immutable Hugging Face URLs/revisions and SHA-256 hashes for `Model/model.pt`,
-   `Model/trfm_12_23000.pkl`, `Model/vocab.pkl`, and `Model/bert_vocab.txt`;
-5. a deterministic batch builder that merges the manifest, graph tensors, sequence
+4. a deterministic batch builder that merges the manifest, graph tensors, sequence
    features, substrate features, PST features, and targets into `.pt` files.

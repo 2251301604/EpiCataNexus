@@ -223,9 +223,10 @@ documented in [docs/PREPROCESSING.md](docs/PREPROCESSING.md) and
 
 Helper scripts are provided for ProtT5/ESM-2 extraction, Hugging Face-compatible TRFM
 feature extraction, standardizing externally computed PST vectors, and single-query
-legacy PDB+SMILES inference. The PST checkpoint (`Model/model.pt`) and TRFM assets
-(`Model/trfm_12_23000.pkl`, `Model/vocab.pkl`, plus `Model/bert_vocab.txt`) should be
-hosted outside GitHub, for example in the Hugging Face model repository.
+legacy PDB+SMILES inference. The PST checkpoint (`Model/model.pt`) and TRFM/SMILES
+assets (`Model/trfm_12_23000.pkl`, `Model/vocab.pkl`, and `Model/bert_vocab.txt`) are
+hosted outside GitHub in the Hugging Face model repository; see
+[docs/WEIGHTS.md](docs/WEIGHTS.md) for immutable links and SHA-256 hashes.
 
 ## Training and evaluation
 
