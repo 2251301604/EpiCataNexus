@@ -18,10 +18,10 @@ run this script with `--pdb`.
 from __future__ import annotations
 
 import argparse
-import csv
 import gzip
 import math
 import re
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -175,6 +175,20 @@ def normalize_sequence(sequence: str) -> str:
     if not sequence:
         raise ValueError("Encountered an empty protein sequence.")
     return NON_STANDARD_RESIDUES.sub("X", sequence)
+
+
+def truncate_sequence(sequence: str, max_residues: int, mode: str) -> str:
+    if max_residues <= 0:
+        raise ValueError("--max-residues must be positive.")
+    if len(sequence) <= max_residues:
+        return sequence
+    if mode == "head":
+        return sequence[:max_residues]
+    if mode == "balanced":
+        left = max_residues // 2
+        right = max_residues - left
+        return sequence[:left] + sequence[-right:]
+    raise ValueError(f"Unsupported truncate mode: {mode}")
 
 
 def read_sequence_file(path: Path) -> str:
@@ -401,27 +415,75 @@ def get_direction_orientation(x: torch.Tensor, edge_index: torch.Tensor):
     return node_dir, edge_dir, F.normalize(torch.cat((xyz, w), -1), dim=-1)
 
 
-def build_graph_from_pdb(pdb_path: Path, chain: str | None, radius: float) -> Data:
+def get_dssp_features(pdb_path: Path, n_residues: int, dssp_bin: str | None) -> tuple[torch.Tensor, str]:
+    if not dssp_bin:
+        return torch.zeros((n_residues, 9), dtype=torch.float32), "zero_filled_no_dssp_bin"
+    dssp_path = Path(dssp_bin).expanduser()
+    if not dssp_path.exists():
+        return torch.zeros((n_residues, 9), dtype=torch.float32), f"zero_filled_missing_dssp:{dssp_bin}"
+
+    ss_map = {"H": 0, "B": 1, "E": 2, "G": 3, "I": 4, "T": 5, "S": 6, "-": 7}
+    try:
+        result = subprocess.run(
+            [str(dssp_path), "--output-format", "dssp", str(pdb_path)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        lines = result.stdout.splitlines()
+        header_idx = next(
+            (i for i, line in enumerate(lines) if "#" in line and "RESIDUE" in line and "AA" in line),
+            -1,
+        )
+        if header_idx < 0:
+            return torch.zeros((n_residues, 9), dtype=torch.float32), "zero_filled_unparsed_dssp"
+        acc_pos = lines[header_idx].find("ACC")
+        features = torch.zeros((n_residues, 9), dtype=torch.float32)
+        for i, line in enumerate(lines[header_idx + 1 :]):
+            if i >= n_residues:
+                break
+            if len(line) < 30:
+                continue
+            ss_char = line[16] if len(line) > 16 else "-"
+            if ss_char == " ":
+                ss_char = "-"
+            try:
+                abs_asa = float(line[acc_pos - 2 : acc_pos + 3].strip())
+                rel_asa = min(abs_asa / 200.0, 1.0)
+            except Exception:
+                rel_asa = 0.0
+            features[i, ss_map.get(ss_char, 7)] = 1.0
+            features[i, 8] = rel_asa
+        return features, "dssp"
+    except Exception as exc:
+        return torch.zeros((n_residues, 9), dtype=torch.float32), f"zero_filled_dssp_error:{exc}"
+
+
+def build_graph_from_pdb(pdb_path: Path, chain: str | None, radius: float, dssp_bin: str | None = None) -> Data:
     x = parse_pdb_atoms(pdb_path, chain=chain).float()
     ca = x[:, 1]
     dist_matrix = torch.cdist(ca, ca)
-    edge_index = ((dist_matrix <= radius) & (dist_matrix > 0)).nonzero().t()
+    edge_index = ((dist_matrix <= radius) & (dist_matrix > 0)).nonzero().t().contiguous()
     if edge_index.numel() == 0:
         raise RuntimeError(f"No graph edges generated for {pdb_path}; check structure or radius.")
     node_angles = get_angle(x)
     node_dist, edge_dist = get_distance(x, edge_index)
     node_dir, edge_dir, edge_ori = get_direction_orientation(x, edge_index)
+    dssp_features, dssp_status = get_dssp_features(pdb_path, x.size(0), dssp_bin)
+    node_features = torch.cat([node_angles, node_dist, node_dir, dssp_features], dim=-1)
+    edge_features = torch.cat([positional_encodings(edge_index), edge_ori, edge_dist, edge_dir], dim=-1)
+    if node_features.size(1) != 51 or edge_features.size(1) != 92:
+        raise RuntimeError(
+            f"Unexpected graph dimensions: node={node_features.size(1)}, edge={edge_features.size(1)}"
+        )
     graph = Data(
-        x=torch.cat([node_angles, node_dist, node_dir], dim=-1),
-        pos=ca,
+        x=torch.nan_to_num(node_features, 0.0),
+        pos=torch.nan_to_num(ca, 0.0),
         edge_index=edge_index,
-        edge_attr=torch.cat([positional_encodings(edge_index), edge_ori, edge_dist, edge_dir], dim=-1),
+        edge_attr=torch.nan_to_num(edge_features, 0.0),
         name=pdb_path.stem,
     )
-    if graph.x.size(1) != 51 or graph.edge_attr.size(1) != 92:
-        raise RuntimeError(
-            f"Unexpected graph dimensions: node={graph.x.size(1)}, edge={graph.edge_attr.size(1)}"
-        )
+    graph.dssp_status = dssp_status
     return graph
 
 
@@ -637,6 +699,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pst-checkpoint", type=Path, required=True)
     parser.add_argument("--pst-aggr", choices=["none", "mean", "concat"], default="none")
     parser.add_argument("--graph-radius", type=float, default=10.0)
+    parser.add_argument("--dssp-bin", default="", help="Optional mkdssp/DSSP binary. Empty zero-fills the last 9 graph node features.")
+    parser.add_argument("--max-residues", type=int, default=1000)
+    parser.add_argument("--truncate-mode", choices=["head", "balanced"], default="head")
     return parser.parse_args()
 
 
@@ -652,6 +717,17 @@ def main() -> None:
         raise FileNotFoundError(f"PDB file not found: {args.pdb}")
     if args.pocket_pdb is not None and not args.pocket_pdb.exists():
         raise FileNotFoundError(f"Pocket PDB file not found: {args.pocket_pdb}")
+    required_files = {
+        "kcat checkpoint": args.kcat_checkpoint,
+        "Km checkpoint": args.km_checkpoint,
+        "SMILES BERT vocab": args.bert_vocab,
+        "TRFM vocab": args.trfm_vocab,
+        "TRFM model": args.trfm_model,
+        "PST checkpoint": args.pst_checkpoint,
+    }
+    for label, path in required_files.items():
+        if not path.exists():
+            raise FileNotFoundError(f"{label} not found: {path}")
 
     device = resolve_device(args.device)
     if device.type != "cuda":
@@ -674,11 +750,26 @@ def main() -> None:
             "For manuscript-consistent inference, provide a PDB cropped to the fpocket-selected pocket residues.",
             file=sys.stderr,
         )
-    graph = build_graph_from_pdb(graph_source, args.chain or None, args.graph_radius)
+    dssp_bin = args.dssp_bin.strip() or None
+    if dssp_bin:
+        with tempfile.TemporaryDirectory() as graph_tmp:
+            clean_graph_pdb = Path(graph_tmp) / f"{args.protein_id}_graph.pdb"
+            write_clean_pdb_for_pst(graph_source, clean_graph_pdb, args.chain or None)
+            graph = build_graph_from_pdb(clean_graph_pdb, None, args.graph_radius, dssp_bin)
+    else:
+        graph = build_graph_from_pdb(graph_source, args.chain or None, args.graph_radius, None)
+
+    encoded_sequence = truncate_sequence(sequence, args.max_residues, args.truncate_mode)
+    if len(encoded_sequence) != len(sequence):
+        print(
+            f"Warning: sequence length {len(sequence)} exceeds --max-residues {args.max_residues}; "
+            f"using {args.truncate_mode} truncation for ProtT5/ESM-2 pooled features.",
+            file=sys.stderr,
+        )
 
     t5_tokenizer, t5_model, esm_tokenizer, esm_model = load_protein_language_models(args, device)
-    t5_features = extract_t5_pooled(sequence, t5_tokenizer, t5_model, device)
-    esm_features = extract_esm_pooled(sequence, esm_tokenizer, esm_model, device)
+    t5_features = extract_t5_pooled(encoded_sequence, t5_tokenizer, t5_model, device)
+    esm_features = extract_esm_pooled(encoded_sequence, esm_tokenizer, esm_model, device)
     smiles_tokens, trfm_features = extract_smiles_features(args, device)
 
     if args.work_dir:
@@ -710,7 +801,10 @@ def main() -> None:
                 "protein_id": args.protein_id,
                 "smiles": args.smiles,
                 "sequence_length": len(sequence),
+                "encoded_residues": len(encoded_sequence),
+                "truncated": len(encoded_sequence) != len(sequence),
                 "graph_source": str(graph_source),
+                "dssp_status": getattr(graph, "dssp_status", ""),
                 "log10_kcat": log10_kcat,
                 "kcat": 10.0**log10_kcat,
                 "log10_Km": log10_km,

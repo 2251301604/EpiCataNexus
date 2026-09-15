@@ -102,7 +102,8 @@ python scripts/infer_pdb_smiles_kcat_km.py \
 预测结构或实验 PDB。EpiCataNexus 需要结构来源的口袋图和 PST 结构特征，所以
 该脚本不支持纯序列直接推理。若省略 `--pocket-pdb`，脚本会用完整 PDB 构图作为
 便捷近似；若要与论文流程一致，应提供由 fpocket 最高 pocket score 口袋残基裁剪
-得到的 pocket PDB。
+得到的 pocket PDB。51 维节点特征包含 9 维 DSSP/ASA；可通过 `--dssp-bin` 指定
+mkdssp，不指定时这 9 维会零填充，并在输出 CSV 中记录 `dssp_status`。
 
 输入格式、适用范围和限制见 [`docs/WEIGHTS.md`](docs/WEIGHTS.md)、
 [`docs/PREPROCESSING.md`](docs/PREPROCESSING.md) 与 [`MODEL_CARD.md`](MODEL_CARD.md)。

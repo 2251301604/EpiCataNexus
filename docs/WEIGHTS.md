@@ -97,7 +97,8 @@ This helper is PDB-first. If only a protein sequence is available, generate or p
 a PDB structure first; the released pooled checkpoints require a structure-derived
 graph and PST features. Supplying `--pocket-pdb` is recommended for manuscript-aligned
 inference. Without it, the script builds the graph from the full PDB and prints a
-warning.
+warning. The 51-dimensional graph node features include 9 DSSP/ASA dimensions; pass
+`--dssp-bin` for mkdssp, or omit it to zero-fill those dimensions.
 
 Do not pass these `.safetensors` files to `scripts/predict.py`; that script expects a
 canonical residue-level `.pt` checkpoint containing `model_config` and `model_state`.

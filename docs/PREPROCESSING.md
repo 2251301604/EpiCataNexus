@@ -227,7 +227,10 @@ above with `--pdb`. A manuscript-consistent run should also pass a `--pocket-pdb
 containing the residues selected from the highest default fpocket pocket score cavity.
 If `--pocket-pdb` is omitted, the helper builds the graph from the full PDB and emits a
 warning because that is a convenience approximation rather than the exact paper
-preprocessing.
+preprocessing. The graph builder produces the required 51-dimensional node features by
+concatenating 42 geometric features with 9 DSSP/ASA features. Pass `--dssp-bin` to use
+mkdssp; if it is omitted or unavailable, those 9 dimensions are zero-filled and the
+output CSV records `dssp_status`.
 
 The required binary assets `Model/model.pt`, `Model/trfm_12_23000.pkl`,
 `Model/vocab.pkl`, and `Model/bert_vocab.txt` are distributed through Hugging Face

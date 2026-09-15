@@ -149,7 +149,10 @@ for that sequence, for example using AlphaFold/ColabFold or an experimental PDB.
 The model needs a structure-derived pocket graph and PST structural features, so
 sequence-only inference is not supported by this script. If `--pocket-pdb` is
 omitted, the graph is built from the full PDB as a convenience approximation; for
-manuscript-consistent inference, provide the fpocket-selected pocket residues.
+manuscript-consistent inference, provide the fpocket-selected pocket residues. The
+51-dimensional node features include 9 DSSP/ASA dimensions; pass `--dssp-bin` to use
+mkdssp, or omit it to zero-fill those dimensions and record `dssp_status` in the
+output CSV.
 
 See [docs/WEIGHTS.md](docs/WEIGHTS.md), [docs/PREPROCESSING.md](docs/PREPROCESSING.md),
 and [MODEL_CARD.md](MODEL_CARD.md) for the input contract, scope, and limitations.
