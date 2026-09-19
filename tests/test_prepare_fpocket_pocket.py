@@ -7,6 +7,7 @@ from scripts.prepare_fpocket_pocket import (
     ResidueKey,
     choose_top_pocket,
     clean_protein_pdb,
+    detect_fpocket_version,
     parse_fpocket_scores,
     parse_sphere_coordinates,
     select_residues,
@@ -40,6 +41,22 @@ def test_selects_highest_default_fpocket_score(tmp_path: Path):
     scores = parse_fpocket_scores(info)
     assert scores == {1: 12.5, 2: 22.75}
     assert choose_top_pocket(scores) == (2, 22.75)
+
+
+def test_detects_fpocket_version_from_conda_metadata(tmp_path: Path):
+    executable = tmp_path / "env" / "bin" / "fpocket"
+    executable.parent.mkdir(parents=True)
+    executable.write_text("", encoding="utf-8")
+    metadata_dir = tmp_path / "env" / "conda-meta"
+    metadata_dir.mkdir()
+    metadata_path = metadata_dir / "fpocket-4.2.3-test_0.json"
+    metadata_path.write_text(
+        '{"name": "fpocket", "version": "4.2.3"}',
+        encoding="utf-8",
+    )
+    version, source = detect_fpocket_version(executable)
+    assert version == "4.2.3"
+    assert source == f"conda-meta:{metadata_path}"
 
 
 def test_cleaning_removes_ligand_and_unrequested_chain(tmp_path: Path):

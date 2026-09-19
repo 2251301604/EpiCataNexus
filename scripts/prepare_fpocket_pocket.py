@@ -158,6 +158,16 @@ def resolve_executable(value: str) -> Path:
 
 
 def detect_fpocket_version(executable: Path) -> tuple[str | None, str]:
+    conda_meta = executable.parent.parent / "conda-meta"
+    if conda_meta.is_dir():
+        for metadata_path in sorted(conda_meta.glob("fpocket-*.json")):
+            try:
+                metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if metadata.get("name") == "fpocket" and metadata.get("version"):
+                return str(metadata["version"]), f"conda-meta:{metadata_path}"
+
     outputs = []
     for flag in ("--version", "-v"):
         result = subprocess.run(
